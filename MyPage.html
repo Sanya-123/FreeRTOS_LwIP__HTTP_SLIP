@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>150МГц</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" contentPage="width=device-width">
+    <meta http-equiv="cache-control" contentPage="no-cache">
+    <link rel="shortcut icon" href="data:image/x-icon;base64,R0lGODlhEAAQAIAAAAzG3v///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4zLWMwMTEgNjYuMTQ1NjYxLCAyMDEyLzAyLzA2LTE0OjU2OjI3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOjVFNzc2QkZBQjUzMkU2MTFCM0U4QzVFMjRCNzBCQzVFIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjYzMjkwRTUxMzJCODExRTZCMjRERTg3MTAwNkY2RUYwIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjYzMjkwRTUwMzJCODExRTZCMjRERTg3MTAwNkY2RUYwIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NjI3NzZCRkFCNTMyRTYxMUIzRThDNUUyNEI3MEJDNUUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NUU3NzZCRkFCNTMyRTYxMUIzRThDNUUyNEI3MEJDNUUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B//79/Pv6+fj39vX08/Lx8O/u7ezr6uno5+bl5OPi4eDf3t3c29rZ2NfW1dTT0tHQz87NzMvKycjHxsXEw8LBwL++vby7urm4t7a1tLOysbCvrq2sq6qpqKempaSjoqGgn56dnJuamZiXlpWUk5KRkI+OjYyLiomIh4aFhIOCgYB/fn18e3p5eHd2dXRzcnFwb25tbGtqaWhnZmVkY2JhYF9eXVxbWllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkFAPz49PDs6OTg3NjU0MzIxMC8uLSwrKikoJyYlJCMiISAfHh0cGxoZGBcWFRQTEhEQDw4NDAsKCQgHBgUEAwIBAAAh+QQAAAAAACwAAAAAEAAQAAACIYyPqcsLbV6UiAJ5VQ57VwxqIUcd3ViZqLNqKvTBpkzDBQA7" type="image/x-icon"/>
+    <style type="text/css">
+        *{margin:0; padding:0;}
+        html,body
+        {
+            font-size: 14px;
+            font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            padding: 0px;
+            margin: 1em auto;
+            width: 850px;
+            background-color:#787878;
+        }
+        .header
+        {
+            background: #6CaCdC;
+            color: #dddddd;
+            float: left;
+            width: 820px;
+            padding: 20px 0 20px 30px;
+            font-size: 2.5em;
+        }
+        .Label
+        {
+            padding: 0.25em;
+            background: #87bbe2;
+            color: white;
+            font-weight: bold;
+            width: 100%;
+            float: left;
+            margin-left: -20px;
+            margin-bottom: 10px;
+        }
+        #loginPage
+        {
+            display: block;
+            background-color:#e6f1f9;
+            margin: 0 auto;
+            padding: 100px 0 20px 30px;
+        }
+        #contentPage
+        {
+            display: block;
+            background-color:#e6f1f9;
+            margin: 0 auto;
+            padding: 100px 0 20px 30px;
+        }
+        button {
+            margin: 2px;
+        }
+    </style>
+</head>
+<body onload="functionOnLoad()">
+    <div class="header">150МГц</div>
+    <div id="contentPage">
+
+        <span class="Label">Управление</span><br>
+        <center>
+            <button id="left"  onclick="rotateLeft();"><--Поворот налево</button>
+        </center>
+
+    </div>
+    <script>
+        function createXMLHttpRequest()
+        {
+            try { return new XMLHttpRequest(); } catch(e) {}
+            try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
+            return null;
+        }
+
+        function ajax(url, data, success, error)
+        {
+            var xhr = createXMLHttpRequest();
+            if (xhr === null)
+                 return -1;
+            xhr.open('POST', url, true);
+            try
+            {
+                xhr.send(data);
+            }
+            catch(e)
+            {
+                if (error)
+                    error("Error sending request");
+                delete xhr;
+                return -1;
+            }
+
+            xhr.onreadystatechange = function()
+            {
+                if ((xhr.readyState === 4))
+                {
+                    if(xhr.status === 200)
+                    {
+                        if (success)
+                            success(xhr.responseText);
+                    }
+                    else
+                    {
+                        if (error)
+                            error(xhr.responseText);
+                    }
+                }
+                return -1;
+            };
+            return 0;
+        }
+        /*-------------------------------------- Шаг направо ---------------------------------*/
+        function rotateRightStep()
+        {
+            ajax('test.cgi', "rrstartStep\r\n", rotRightStep);
+        }
+        function rotRightStep(respone)
+        {
+            if (respone == "1")
+                document.getElementById("rightStep").style.backgroundColor="green";
+            else
+                document.getElementById("rightStep").style.backgroundColor="red";
+            setTimeout(function(){document.getElementById("rightStep").style.backgroundColor=""}, 1000);
+        }
+    </script>
+</body>
+</html>
