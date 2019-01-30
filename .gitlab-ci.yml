@@ -1,0 +1,14 @@
+stages:
+  - build
+
+variables:
+  BUILDROOT: "buildroot-2017.08.1"
+
+build:
+  stage: build
+  script:
+  - CC=$BUILDROOT_DIR/$BUILDROOT/output/host/bin/arm-linux-gcc make
+  artifacts:
+    paths:
+    - fpga_loader
+
