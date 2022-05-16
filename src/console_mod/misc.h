@@ -1,9 +1,6 @@
 #ifndef _MICRORL_MISC_H_
 #define _MICRORL_MISC_H_
 
-//apps
-#include "ebi_rw.h"
-
 
 /*
 Platform independent interface for implementing some specific function
@@ -27,5 +24,9 @@ char ** complet (void * pThis, int argc, const char * const * argv);
 
 // ctrl+c callback
 void sigint (void * pThis);
+
+//работа с командами
+void initDefoultCMD();
+void addCmd(const char *name, int (*execCmd) (void * pThis, int argc, const char * const * argv ));
 
 #endif

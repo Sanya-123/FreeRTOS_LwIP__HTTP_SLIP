@@ -23,7 +23,7 @@ sio_fd_t sio_open(u8_t devnum)
 
     xTaskCreate(task_rrintErrorUart, "print error uart", 64, NULL, 1, NULL);
 
-    return 1;
+    return (sio_fd_t)UART_SLIP_SPEED;
 }
 
 void sio_send(u8_t c, sio_fd_t fd)
@@ -35,7 +35,7 @@ void sio_send(u8_t c, sio_fd_t fd)
 u8_t sio_recv(sio_fd_t fd)
 {
     LWIP_UNUSED_ARG(fd);
-    uint8_t dataFromUART = NULL;
+    uint8_t dataFromUART = (uint8_t)NULL;
     while (xQueueReceive(queueUART, (void *)(&dataFromUART), portMAX_DELAY) != pdTRUE);
     return dataFromUART;
 }

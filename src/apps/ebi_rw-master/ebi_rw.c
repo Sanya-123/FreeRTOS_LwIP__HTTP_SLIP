@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stddef.h>
@@ -11,7 +11,12 @@
 #include "ebi_rw.h"
 #include "xprintf.h"
 
-#include <getopt.h>
+//#include <getopt.h>
+#include "getopt.h"
+
+//#define OPTPARSE_IMPLEMENTATION
+//#define OPTPARSE_API static
+//#include "optparse.h"
 
 microrl_t * outPutData;
 
@@ -24,7 +29,7 @@ void setOutMicroRl__ebi_rv(microrl_t * pThis)
 void outputFunction(unsigned char c)
 {
     char ch[2] = {c, 0};
-//    outPutData->print(ch);
+    outPutData->print(ch);
 }
 
 #define VERSION_NUMBER 3
@@ -101,7 +106,7 @@ void print_help_ebi_rw(const char *program_name)
     xfprintf(outputFunction,"    %s 0xAA 1 1            - read 1 byte,  fpga 1\n", program_name);
     xfprintf(outputFunction,"    %s 0xAA 0 1 0xBB       - write 1 byte, fpga 1\n", program_name);
     xfprintf(outputFunction,"    %s 0xAA 4 2 0xBB 0xCC  - write 2 byte, fpga 4\n", program_name);
-    xfprintf(outputFunction,"    %s 0xAA 4 2 0xBBCC -n2 - write 2 byte, fpga 4\n", program_name);
+    xfprintf(outputFunction,"    %s -n2 0xAA 4 2 0xBBCC - write 2 byte, fpga 4\n", program_name);
 #endif
 }
 
@@ -212,15 +217,20 @@ int main_ebi_rw(int argc, char **argv)
 
 
     int opt = 0;
+//    struct optparse optionsOpt;
+//    optparse_init(&optionsOpt, argv);
+//    optionsOpt.optind = 1;
+//    while ((opt = optparse(&optionsOpt, "hdso:b:n:")) != -1)  // Разбираем ключи
+    optind = 0;
     while ((opt = getopt(argc, argv, "hdso:b:n:")) != EOF)  // Разбираем ключи
     {
         switch (opt)
         {
             case 'o':                                       // смещение для адреса
-                options.address_offset = parse_address(optarg);
+                options.address_offset = parse_address(/*optionsOpt.*/optarg);
                 break;
             case 'b':                                       // формат выводимых данных (bin dec hex)
-                options.data_base = atoi(optarg);
+                options.data_base = atoi(/*optionsOpt.*/optarg);
                 if (options.data_base != 2 &&  options.data_base != 10 && options.data_base != 16)
                 {
                     print_help_ebi_rw(program_name);
@@ -229,7 +239,7 @@ int main_ebi_rw(int argc, char **argv)
                 }
                 break;
             case 'n':                                       // размерность выводимых данных (0xFF 0xFFFF 0xFFFFFFFF)
-                options.data_bytes = atoi(optarg);
+                options.data_bytes = atoi(/*optionsOpt.*/optarg);
                 if (options.data_bytes != 1 && options.data_bytes != 2 && options.data_bytes != 4)
                 {
                     print_help_ebi_rw(program_name);
@@ -253,8 +263,8 @@ int main_ebi_rw(int argc, char **argv)
     };
 
 
-    argv += optind;
-    argc -= optind;                                     // Из аргументов исключаем ключи, после чего должны
+    argv += /*optionsOpt.*/optind;
+    argc -= /*optionsOpt.*/optind;                                     // Из аргументов исключаем ключи, после чего должны
     //                                                  // остаться как минимум - адрес и размер данных
     if (argc < 2 || argc > (2 + MAXIMUM_ESPI_DATA_SIZE))// или номер fpga и адрес
     {
@@ -433,7 +443,7 @@ int main_ebi_rw(int argc, char **argv)
     }
 
     swap(package.data, package.datasize);
-return 0;
+
     if (package.isWrite == false)            // Печатаем полученные данные
     {
         uint32_t tmp_data = 0;
@@ -501,7 +511,6 @@ return 0;
             }
         }
     }
-return 0;
     xfprintf(outputFunction, "OK\n");
     return 0;
 //    exit(EXIT_SUCCESS);

@@ -726,7 +726,30 @@
  * transport.
  */
 #ifndef LWIP_SNMP
-#define LWIP_SNMP                       0
+#define LWIP_SNMP                       1
+#endif
+
+/**
+ * Indicates if the MIB2 implementation of LWIP SNMP stack is used.
+ */
+#ifndef SNMP_LWIP_MIB2
+#define SNMP_LWIP_MIB2                      LWIP_SNMP
+#endif
+
+/**
+ * LWIP_MIB2_CALLBACKS==1: Turn on SNMP MIB2 callbacks.
+ * Turn this on to get callbacks needed to implement MIB2.
+ * Usually MIB2_STATS should be enabled, too.
+ */
+#ifndef LWIP_MIB2_CALLBACKS
+#define LWIP_MIB2_CALLBACKS             0
+#endif
+
+/**
+ * MIB2_STATS==1: Stats for SNMP MIB2.
+ */
+#ifndef MIB2_STATS
+#define MIB2_STATS                      1
 #endif
 
 /**
@@ -787,6 +810,24 @@
  */
 #ifndef SNMP_MAX_VALUE_SIZE
 #define SNMP_MAX_VALUE_SIZE             LWIP_MAX((SNMP_MAX_OCTET_STRING_LEN)+1, sizeof(s32_t)*(SNMP_MAX_TREE_DEPTH))
+#endif
+
+/**
+ * SNMP_USE_NETCONN: Use netconn API instead of raw API.
+ * Makes SNMP agent run in a worker thread, so blocking operations
+ * can be done in MIB calls.
+ */
+#ifndef SNMP_USE_NETCONN
+#define SNMP_USE_NETCONN           0
+#endif
+
+/**
+ * SNMP_USE_RAW: Use raw API.
+ * SNMP agent does not run in a worker thread, so blocking operations
+ * should not be done in MIB calls.
+ */
+#ifndef SNMP_USE_RAW
+#define SNMP_USE_RAW               1
 #endif
 
 /*
@@ -868,7 +909,7 @@
  * LWIP_UDP==1: Turn on UDP.
  */
 #ifndef LWIP_UDP
-#define LWIP_UDP                        0
+#define LWIP_UDP                        1
 #endif
 
 /**
@@ -1272,7 +1313,7 @@
  * sys_thread_new() when the thread is created.
  */
 #ifndef TCPIP_THREAD_STACKSIZE
-#define TCPIP_THREAD_STACKSIZE          1024
+#define TCPIP_THREAD_STACKSIZE          512
 #endif
 
 /**
@@ -1306,7 +1347,7 @@
  * sys_thread_new() when the thread is created.
  */
 #ifndef SLIPIF_THREAD_STACKSIZE
-#define SLIPIF_THREAD_STACKSIZE         1024
+#define SLIPIF_THREAD_STACKSIZE         512
 #endif
 
 /**
@@ -1365,7 +1406,21 @@
  * sys_thread_new() when the thread is created.
  */
 #ifndef DEFAULT_THREAD_PRIO
-#define DEFAULT_THREAD_PRIO             (PRIO_LWIP)
+#define DEFAULT_THREAD_PRIO             (2)
+#endif
+
+/**
+ * SNMP_STACK_SIZE: Stack size of SNMP netconn worker thread
+ */
+#ifndef SNMP_STACK_SIZE
+#define SNMP_STACK_SIZE                 512
+#endif
+
+/**
+ * SNMP_THREAD_PRIO: SNMP netconn worker thread priority
+ */
+#ifndef SNMP_THREAD_PRIO
+#define SNMP_THREAD_PRIO                3
 #endif
 
 /**
@@ -1414,7 +1469,7 @@
  * Don't use it if you're not an active lwIP project member
  */
 #ifndef LWIP_TCPIP_CORE_LOCKING
-#define LWIP_TCPIP_CORE_LOCKING         1
+#define LWIP_TCPIP_CORE_LOCKING         0
 #endif
 
 /**
@@ -1422,7 +1477,7 @@
  * Don't use it if you're not an active lwIP project member
  */
 #ifndef LWIP_TCPIP_CORE_LOCKING_INPUT
-#define LWIP_TCPIP_CORE_LOCKING_INPUT   1
+#define LWIP_TCPIP_CORE_LOCKING_INPUT   0
 #endif
 
 /**
@@ -1913,7 +1968,7 @@
  * debug messages of certain types.
  */
 #ifndef LWIP_DBG_TYPES_ON
-#define LWIP_DBG_TYPES_ON               LWIP_DBG_ON
+#define LWIP_DBG_TYPES_ON               LWIP_DBG_OFF
 #endif
 
 /**
@@ -1927,7 +1982,7 @@
  * NETIF_DEBUG: Enable debugging in netif.c.
  */
 #ifndef NETIF_DEBUG
-#define NETIF_DEBUG                     LWIP_DBG_ON
+#define NETIF_DEBUG                     LWIP_DBG_OFF
 #endif
 
 /**
@@ -1941,21 +1996,21 @@
  * API_LIB_DEBUG: Enable debugging in api_lib.c.
  */
 #ifndef API_LIB_DEBUG
-#define API_LIB_DEBUG                   LWIP_DBG_ON
+#define API_LIB_DEBUG                   LWIP_DBG_OFF
 #endif
 
 /**
  * API_MSG_DEBUG: Enable debugging in api_msg.c.
  */
 #ifndef API_MSG_DEBUG
-#define API_MSG_DEBUG                   LWIP_DBG_ON
+#define API_MSG_DEBUG                   LWIP_DBG_OFF
 #endif
 
 /**
  * SOCKETS_DEBUG: Enable debugging in sockets.c.
  */
 #ifndef SOCKETS_DEBUG
-#define SOCKETS_DEBUG                   LWIP_DBG_ON
+#define SOCKETS_DEBUG                   LWIP_DBG_OFF
 #endif
 
 /**
@@ -2004,21 +2059,21 @@
  * MEM_DEBUG: Enable debugging in mem.c.
  */
 #ifndef MEM_DEBUG
-#define MEM_DEBUG                       LWIP_DBG_ON
+#define MEM_DEBUG                       LWIP_DBG_OFF
 #endif
 
 /**
  * MEMP_DEBUG: Enable debugging in memp.c.
  */
 #ifndef MEMP_DEBUG
-#define MEMP_DEBUG                      LWIP_DBG_ON
+#define MEMP_DEBUG                      LWIP_DBG_OFF
 #endif
 
 /**
  * SYS_DEBUG: Enable debugging in sys.c.
  */
 #ifndef SYS_DEBUG
-#define SYS_DEBUG                       LWIP_DBG_ON
+#define SYS_DEBUG                       LWIP_DBG_OFF
 #endif
 
 /**
@@ -2096,7 +2151,7 @@
  * UDP_DEBUG: Enable debugging in UDP.
  */
 #ifndef UDP_DEBUG
-#define UDP_DEBUG                       LWIP_DBG_OFF
+#define UDP_DEBUG                       LWIP_DBG_ON
 #endif
 
 /**
@@ -2138,14 +2193,14 @@
  * SNMP_MSG_DEBUG: Enable debugging for SNMP messages.
  */
 #ifndef SNMP_MSG_DEBUG
-#define SNMP_MSG_DEBUG                  LWIP_DBG_OFF
+#define SNMP_MSG_DEBUG                  LWIP_DBG_ON
 #endif
 
 /**
  * SNMP_MIB_DEBUG: Enable debugging for SNMP MIBs.
  */
 #ifndef SNMP_MIB_DEBUG
-#define SNMP_MIB_DEBUG                  LWIP_DBG_OFF
+#define SNMP_MIB_DEBUG                  LWIP_DBG_ON
 #endif
 
 /**

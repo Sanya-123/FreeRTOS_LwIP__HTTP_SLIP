@@ -1,6 +1,10 @@
 import qbs
 import qbs.FileInfo
 
+//start slip interface on PC
+//sudo slattach -p slip -s 115200 /dev/ttyACM0
+//sudo ifconfig sl0 192.168.10.2 pointopoint 192.168.10.1
+
 Product {
     type: ["application", "bin", "hex", "size"]
     Depends { name:"cpp" }
@@ -12,20 +16,12 @@ Product {
         "STM32F407xx",
         "PRIO_LWIP=3",  //приоритеты тдля lwip
         "LWIP_DEBUG",
-
-//        "STM32F407xx",
-//    //        "HW_V2",
-//        "HW_V1",
-
-//    //        "SOCKETS_MT",  //its_my for sockets_mt
-
-//        "LIB_ALLOC_FUNC=pvPortMalloc",
-//        "LIB_FREE_FUNC=vPortFree",
-
+//        "ARM_MATH_CM4",
+//        "__FPU_PRESENT=1",
     ]
 
     files: [
-        "Drivers/**",
+        "Drivers/*",
         "src/*",
         "src/console_mod/*",
                 //OS
@@ -40,13 +36,21 @@ Product {
         "lwip/arch/*",
         "lwip/core/**",
         "lwip/httpd/*",
+        "lwip/lwiperf/*",
+        "lwip/snmp/*",
         "lwip/httpd/ssi/*",
         "lwip/httpd/post/*",
         "lwip/netif/*",
         "lwip/include/**",
+
+        "src/snmp/*",
             //apps programm thast include from telnet / console
         "src/apps/ebi_rw-master/*.c",
         "src/apps/ebi_rw-master/*.h",
+//            //telNet
+//        "src/TelNet/*"
+
+        //math
     ]
 
     cpp.includePaths: [
@@ -63,22 +67,30 @@ Product {
         "lwip/",
         "lwip/include/",
         "lwip/httpd/ssi/",
+        "lwip/snmp/",
+
+        "src/snmp/",
             //apps programm thast include from telnet / console
         "src/apps/ebi_rw-master/",
         "src/apps/ebi_rw-master/",
+//            //telNet
+//        "src/TelNet/"
+    ]
+    cpp.libraryPaths: [
+        "./"
     ]
 
     cpp.driverFlags: [
         "-mthumb",
         "-mcpu=cortex-m4",
         "-mfloat-abi=hard",
-        //"-msoft-float",
+//        "-msoft-float",
         "-mfpu=fpv4-sp-d16",
         "-fno-strict-aliasing",
         "-fdata-sections",
         "-ffunction-sections",
         "-fshort-enums",
-        "-flto",
+//        "-flto",      //это какой-то оптимизатор из за него не собираеться когда все вместе
         "-finput-charset=UTF-8",
         "-fexec-charset=cp1251",
         "-std=gnu11",
@@ -91,7 +103,6 @@ Product {
     ]
 
     cpp.commonCompilerFlags: [
-
     ]
 
     cpp.linkerFlags :  [

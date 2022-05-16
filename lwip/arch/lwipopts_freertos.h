@@ -37,7 +37,7 @@
 
 /* tcpip_thread should run on HIGH priority */
 #define TCPIP_THREAD_NAME              "tcpip_thread"
-#define TCPIP_THREAD_STACKSIZE         (512 * 4)
+//#define TCPIP_THREAD_STACKSIZE         (512 * 4)
 #define TCPIP_THREAD_PRIO              tskIDLE_PRIORITY + 4
 
 
@@ -202,7 +202,7 @@
 #define TCP_MAXRTX              12
 
 /* Maximum number of retransmissions of SYN segments. */
-//#define TCP_SYNMAXRTX           4
+#define TCP_SYNMAXRTX           4
 
 /**
  * LWIP_RANDOMIZE_INITIAL_LOCAL_PORTS==1: randomize the local port for the first
@@ -331,7 +331,7 @@
 //#define LWIP_DEBUG
 //#define UDP_DEBUG LWIP_DBG_ON
 //#define SOCKETS_DEBUG LWIP_DBG_ON
-#define NETIF_DEBUG LWIP_DBG_ON
+//#define NETIF_DEBUG LWIP_DBG_ON
 //#define ETHARP_DEBUG LWIP_DBG_ON
 //#define DHCP_DEBUG LWIP_DBG_ON
 //#define IP_DEBUG LWIP_DBG_ON

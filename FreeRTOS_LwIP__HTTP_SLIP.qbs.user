@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.3.1, 2019-01-30T14:25:18. -->
+<!-- Written by QtCreator 4.14.2, 2022-05-16T14:39:42. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
-  <value type="QByteArray">{2f29978f-54f5-4d42-adf5-ac26295c9ecc}</value>
+  <value type="QByteArray">{a2935c9f-de5e-4194-be16-d574f8f8aa07}</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -59,9 +59,9 @@
  <data>
   <variable>ProjectExplorer.Project.Target.0</variable>
   <valuemap type="QVariantMap">
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">ARM_stlink</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">ARM_stlink</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{ce133b61-88c6-48a6-a58a-32e3cce4249f}</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">ARM</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">ARM</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{03f74fa9-81da-4760-a6db-145de7469112}</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">-1</value>
    <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
@@ -75,14 +75,14 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qbs.BuildStep</value>
       <value type="bool" key="Qbs.CleanInstallRoot">false</value>
       <valuemap type="QVariantMap" key="Qbs.Configuration">
-       <value type="QString" key="qbs.buildVariant">debug</value>
-       <value type="QString" key="qbs.profile">qtc_ARM_stli_4b12f796</value>
+       <value type="QString" key="qbs.defaultBuildVariant">debug</value>
+       <value type="QString" key="qbs.profile">qtc_ARM_69ad56af</value>
        <value type="bool" key="qbspm.forceProbes">false</value>
       </valuemap>
       <value type="bool" key="Qbs.DryKeepGoing">false</value>
       <value type="bool" key="Qbs.DryRun">false</value>
       <value type="bool" key="Qbs.Install">true</value>
-      <value type="int" key="Qbs.MaxJobs">2</value>
+      <value type="int" key="Qbs.MaxJobs">4</value>
       <value type="bool" key="Qbs.ShowCommandLines">false</value>
       <value type="bool" key="Qbs.forceProbesKey">false</value>
      </valuemap>
@@ -111,6 +111,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Отладка</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qbs.QbsBuildConfiguration</value>
+    <value type="QString" key="Qbs.configName">qtc_ARM_Отладка</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/user/Projects/MK/FreeRTOS_LwIP__HTTP_SLIP/bin</value>
@@ -122,8 +123,8 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qbs.BuildStep</value>
       <value type="bool" key="Qbs.CleanInstallRoot">false</value>
       <valuemap type="QVariantMap" key="Qbs.Configuration">
-       <value type="QString" key="qbs.buildVariant">release</value>
-       <value type="QString" key="qbs.profile">qtc_ARM_stli_4b12f796</value>
+       <value type="QString" key="qbs.defaultBuildVariant">release</value>
+       <value type="QString" key="qbs.profile">qtc_ARM_69ad56af</value>
       </valuemap>
       <value type="bool" key="Qbs.DryKeepGoing">false</value>
       <value type="bool" key="Qbs.DryRun">false</value>
@@ -157,6 +158,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Выпуск</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qbs.QbsBuildConfiguration</value>
+    <value type="QString" key="Qbs.configName">qtc_ARM_Выпуск</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.BuildConfigurationCount">2</value>
    <value type="int" key="ProjectExplorer.Target.DeployConfigurationCount">0</value>
@@ -203,10 +205,10 @@
     </valuelist>
     <value type="QString" key="BareMetal.RunConfig.WorkingDirectory"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">FreeRTOS_LwIP__HTTP_SLIP (через сервер GDB или аппаратный отладчик)</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">FreeRTOS_LwIP__HTTP_SLIP (через сервер GDB или аппаратный отладчик)2</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">BareMetal/home/user/Projects/MK/FreeRTOS_LwIP__HTTP_SLIP/FreeRTOS_LwIP__HTTP_SLIP.qbs</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">BareMetal/home/user/Projects/MK/FreeRTOS_LwIP__HTTP_SLIP/FreeRTOS_LwIP__HTTP_SLIP.qbs/FreeRTOS_LwIP__HTTP_SLIP</value>
     <value type="QString" key="Qt4ProjectManager.MaemoRunConfiguration.Arguments"></value>
-    <value type="QString" key="Qt4ProjectManager.MaemoRunConfiguration.ProFile">FreeRTOS_LwIP__HTTP_SLIP.qbs</value>
+    <value type="QString" key="Qt4ProjectManager.MaemoRunConfiguration.ProFile">FreeRTOS_LwIP__HTTP_SLIP.qbs/FreeRTOS_LwIP__HTTP_SLIP</value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>

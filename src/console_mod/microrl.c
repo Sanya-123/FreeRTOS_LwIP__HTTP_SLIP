@@ -16,6 +16,7 @@ BUGS and TODO:
 //#define DBG(...) fprintf(stderr, "\033[33m");fprintf(stderr,__VA_ARGS__);fprintf(stderr,"\033[0m");
 
 char * prompt_default = _PROMPT_DEFAULT;
+short _PROMPT_LEN = 4;
 
 #ifdef _USE_HISTORY
 
@@ -178,12 +179,6 @@ static int hist_restore_line (ring_history_t * pThis, char * line, int dir)
 #endif
 
 
-
-
-
-
-
-
 //*****************************************************************************
 // split cmdline to tkn array and return nmb of token
 static int split (microrl_t * pThis, int limit, char const ** tkn_arr)
@@ -274,7 +269,8 @@ static void terminal_move_cursor (microrl_t * pThis, int offset)
 	} else
 		return;
 #endif	
-	pThis->print (str);
+    pThis->print (str);
+//    strcat(pThis->printLine, str);
 }
 
 //*****************************************************************************
@@ -283,24 +279,28 @@ static void terminal_reset_cursor (microrl_t * pThis)
 	char str[16];
 #ifdef _USE_LIBC_STDIO
 	snprintf (str, 16, "\033[%dD\033[%dC", \
-						_COMMAND_LINE_LEN + _PROMPT_LEN + 2, _PROMPT_LEN);
+                        _COMMAND_LINE_LEN + pThis->_PROMPT_LEN + 2, pThis->_PROMPT_LEN);
 
 #else
 	char *endstr;
 	strcpy (str, "\033[");
-	endstr = u16bit_to_str ( _COMMAND_LINE_LEN + _PROMPT_LEN + 2,str+2);
+    endstr = u16bit_to_str ( _COMMAND_LINE_LEN + pThis->_PROMPT_LEN + 2,str+2);
 	strcpy (endstr, "D\033["); endstr += 3;
-	endstr = u16bit_to_str (_PROMPT_LEN, endstr);
+    endstr = u16bit_to_str (pThis->_PROMPT_LEN, endstr);
 	strcpy (endstr, "C");
 #endif
-	pThis->print (str);
+    pThis->print (str);
+//    strcat(pThis->printLine, str);
+
 }
 
 //*****************************************************************************
 // print cmdline to screen, replace '\0' to wihitespace 
 static void terminal_print_line (microrl_t * pThis, int pos, int cursor)
 {
-	pThis->print ("\033[K");    // delete all from cursor to end
+//    pThis->printLine[0] = '\0';
+    pThis->print ("\033[K");    // delete all from cursor to end
+//    strcat(pThis->printLine, "\033[K");
 
 	char nch [] = {0,0};
 	int i;
@@ -308,11 +308,13 @@ static void terminal_print_line (microrl_t * pThis, int pos, int cursor)
 		nch [0] = pThis->cmdline [i];
 		if (nch[0] == '\0')
 			nch[0] = ' ';
-		pThis->print (nch);
+        pThis->print (nch);
+//        strcat(pThis->printLine, nch);
 	}
 	
 	terminal_reset_cursor (pThis);
 	terminal_move_cursor (pThis, cursor);
+//    pThis->print (pThis->printLine);
 }
 
 //*****************************************************************************
@@ -338,6 +340,18 @@ void microrl_init (microrl_t * pThis, void (*print) (const char *))
 	print_prompt (pThis);
 #endif
     pThis->terminalHasEcho = false;
+    pThis->_PROMPT_LEN = 4;
+}
+//*****************************************************************************
+void microlSetPromtStr(microrl_t * pThis, char * prompt)
+{
+    pThis->prompt_str = prompt;
+//    microlSetPromptLen(pThis, strlen(prompt));
+}
+//*****************************************************************************
+void microlSetPromptLen(microrl_t * pThis, short lne)
+{
+    pThis->_PROMPT_LEN = lne;
 }
 
 //*****************************************************************************

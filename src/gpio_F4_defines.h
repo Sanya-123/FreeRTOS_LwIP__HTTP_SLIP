@@ -14,5 +14,7 @@
 #define UART6_TX        C,  6,   MODE_AF_PUSH_PULL,     SPEED_50MHZ,    0, AF8   // UART6 Tx (PC6 - ;;37;(63))
 #define UART6_RX        C,  7,   MODE_AF_PUSH_PULL,     SPEED_50MHZ,    0, AF8   // UART6 Rx (PC7 - ;;37;(63))
 
+//#define ADC_PIN         A,  6,   MODE_ANALOG,           SPEED_50MHZ,    0, AF0   // UART6 Tx (PC6 - ;;37;(63))
+
 
 #endif // GPIO_DEFINES_H_

@@ -81,7 +81,7 @@
   но без промежуточных состояний порта, что гораздо безопаснее
 */
 #define _GPIO_PIN0_CONFIGURATION(PORT, AF) \
-    GPIO##PORT->AFR[0] = ( GPIO##PORT->->AFR[0] & (~(15UL << 0)) ) | ((AF) << 0);
+    GPIO##PORT->AFR[0] = ( GPIO##PORT->AFR[0] & (~(15UL << 0)) ) | ((AF) << 0);
 
 #define _GPIO_PIN1_CONFIGURATION(PORT, AF) \
     GPIO##PORT->AFR[0] = ( GPIO##PORT->AFR[0] & (~(15UL << 4)) ) | ((AF) << 4);

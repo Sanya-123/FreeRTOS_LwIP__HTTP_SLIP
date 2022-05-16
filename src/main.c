@@ -9,12 +9,15 @@
 #include "timers.h"
 
 #include "uart.h"
-#include "theardHTTP.h"
+#include "theardNetWork.h"
 #include "xprintf.h"
 #include "theardConsol.h"
 #include "theardTelnetServer.h"
+#include "microrlthead.h"
+//#include "telnet_server.h"
 
-//#define USE_IWDG
+#include "misc.h"
+#include "lwipopts.h"
 
 
 void initAll();
@@ -46,18 +49,8 @@ void IWDG_res(void) // Функция перезагрузки сторожев�
 {
     IWDG->KR = 0xAAAA; // Перезагрузка
 }
-#define WATCH_DOG_DELAY_MS 3000
+#define WATCH_DOG_DELAY_MS 5000
 
-void task_resetIWDG(void *p)//таск с нисшем приоритетом для сбрасывания WatchDog
-{
-    (void)p;
-    while(1)
-    {
-        IWDG_res();
-//        xprintf("ResetIWDS\n");
-//        vTaskDelay(10);
-    }
-}
 #endif
 
 void SystemClock_Config(void)
@@ -109,28 +102,57 @@ void SystemClock_Config(void)
 
 // char Buffer[20];
 
+#define MY_TASK_SIZE        5
+TaskHandle_t myTasksHendle[MY_TASK_SIZE] = {NULL};
+
+void resumAllTask(void *p);
+
+//#define RX_TX_50HZ        D,  0,  MODE_OUTPUT_PUSH_PULL, SPEED_50MHZ,    1, AF0   //
+//void tmpTask(void *arg)
+//{
+//    (void)arg;
+//    PIN_CONFIGURATION(RX_TX_50HZ);
+
+
+//    while (true) {
+//        vTaskDelay(10);
+//        PIN_TOGGLE(RX_TX_50HZ);
+//    }
+//}
+
+
 int main(void)
 {
     initAll();
+    xprintf("Hi\n");
 
-    xTaskCreate(task_diode, "Light Dioder", 64, NULL, 1, NULL);//таску моргания диодами
+//    xTaskCreate(tmpTask, "tmp", 64, NULL, 1, NULL);
+
+    xTaskCreate(task_diode, "Light Dioder", 64, NULL, 1, &myTasksHendle[0]);//таску моргания диодами
 
     xprintf("Add task diode\n");
 
     //run
-    xTaskCreate(theard_HTTP_Server, "SLIP Server", 256, NULL, 6, NULL);//таск обработки slip
+    xTaskCreate(theard_NetWork_Server, "SLIP Server", 256, NULL, 5, &myTasksHendle[1]);//таск обработки slip
 
 #ifdef USE_CONSOLE
-    xTaskCreate(theard_Consol, "Consol", 1024, NULL, 2, NULL);
+    xTaskCreate(theard_Consol, "Consol", 256, NULL, 2, &myTasksHendle[2]);
 #endif
 #ifdef USE_CONSOLE_TELNET
-    xTaskCreate(theard_Telnet_Server, "TelnetServer", 2048, NULL, 2, NULL);
+    xTaskCreate(theard_Telnet_Server, "TelnetServer", 256, NULL, 2, &myTasksHendle[4]);
+//    telnet_server_init();
 #endif
 
-#ifdef USE_IWDG
-    //run IWDS
-    xTaskCreate(task_resetIWDG, "Reset IWDG", 32, NULL, 0, NULL);
-#endif
+    xTaskCreate(taskMicroRl, "MicroRL", 256, NULL, 2, &myTasksHendle[3]);
+
+//    for(int i = 0; i < MY_TASK_SIZE; i++)
+//    {
+//        vTaskSuspend(myTasksHendle[i]);
+//    }
+
+    //задача приостанавливающаа все на некоторое время и тем самым отдает весь русурс idle он запоминает сколько свободного ресурса
+    TaskHandle_t resumA = NULL;
+    xTaskCreate(resumAllTask, "1 sec", configMINIMAL_STACK_SIZE, (void*)(&resumA), configMAX_PRIORITIES - 1, &resumA);
 
     vTaskStartScheduler();
 
@@ -138,6 +160,182 @@ int main(void)
     {
 
     }
+}
+
+void resumAllTask(void *p)
+{//таск по возобновлению всех тасков
+    for(int i = 0; i < MY_TASK_SIZE; i++)
+    {
+        if(myTasksHendle[i] != NULL)
+            vTaskSuspend(myTasksHendle[i]);
+    }
+    vTaskDelay(2200 / portTICK_PERIOD_MS);
+    TaskHandle_t handle = *((TaskHandle_t*)p);
+    vTaskPrioritySet(handle, configMAX_PRIORITIES - 1);
+    for(int i = 0; i < MY_TASK_SIZE; i++)
+    {
+        if(myTasksHendle[i] != NULL)
+            vTaskResume(myTasksHendle[i]);
+    }
+    vTaskDelete(NULL);
+}
+
+void printInfoAbouTask(microrl_t *pThis, TaskHandle_t handleTask)//функция выводящая информацию о 1 таске
+{
+    //************************************info************************************
+    TaskStatus_t status;
+    vTaskGetInfo(handleTask, &status, pdTRUE, eInvalid);
+
+    print(pThis, "+--------------------------------+\n\r");
+    char buf[32];
+    xsprintf(buf, "Task name:%s\n\r", status.pcTaskName);
+    print(pThis, buf);
+    xsprintf(buf, "Size FREE:%d\n\r", status.usStackHighWaterMark);
+    print(pThis, buf);
+    print(pThis, "+--------------------------------+\n\r");
+    //************************************************************************
+}
+
+int print_aboutyTask(void *vpThis, int argc, const char * const *argv)//функция для консоли показывающая информацию о тасках
+{
+    (void)argc;
+    (void)argv;
+    microrl_t *pThis = (microrl_t *)vpThis;
+
+    print(pThis, "\nMy tasks:\n\r");
+    for(int i = 0; i < MY_TASK_SIZE; i++)
+    {
+        if(myTasksHendle[i] == NULL)//2 тасков можен не существовать
+            continue;
+        printInfoAbouTask(pThis, myTasksHendle[i]);
+    }
+    print(pThis, "\nlwIP tasks:\n\r");
+    TaskHandle_t slipTaskH = xTaskGetHandle(SLIPIF_THREAD_NAME);
+    printInfoAbouTask(pThis, slipTaskH);
+    TaskHandle_t tcpipTaskH = xTaskGetHandle(TCPIP_THREAD_NAME);
+    printInfoAbouTask(pThis, tcpipTaskH);
+    return 0;
+}
+
+
+static uint32_t MPU_IDLE = 100;
+static uint32_t MIN_MPU_FREE = 100;
+#define SIZE_CPU_FREE       20
+#ifdef SIZE_CPU_FREE
+static uint32_t masCpuFree[SIZE_CPU_FREE] = {0};
+#endif
+
+void vApplicationIdleHook( void )//idle task
+{//вызываеться когда ничего не вызвано(свободный процесор)
+    //подсчет совбодного ресурса(процентов)
+    static TickType_t LastTick;
+    static uint32_t count = 0, max_count = 0;
+
+    count++;//счетчик подсчета свободный ресурс
+
+    if((xTaskGetTickCount() - LastTick) >= configTICK_RATE_HZ)//если прошло N тиков (1 сек)
+    {
+        LastTick = xTaskGetTickCount();
+        if(count > max_count)
+            max_count = count;  //калибровка максимальноо свободного ресурса
+        MPU_IDLE = 100 * count / max_count; //расчитываю свободный ресурс в процентах
+        if(MPU_IDLE < MIN_MPU_FREE)
+            MIN_MPU_FREE = MPU_IDLE;//максимальная занатость
+#ifdef SIZE_CPU_FREE
+        for(int i = 1; i < SIZE_CPU_FREE; i++)//смешеие графика
+            masCpuFree[i - 1] = masCpuFree[i];
+        masCpuFree[SIZE_CPU_FREE - 1] = MPU_IDLE;//последнее значение
+#endif
+
+        count = 0;//обнуляю счетчик
+    }
+
+    //reset watch dog
+#ifdef USE_IWDG
+    IWDG_res();
+#endif
+}
+
+int print_CPU_FREE(void *vpThis, int argc, const char * const *argv)//вывод ресурсов
+{
+    (void)argc;
+    (void)argv;
+    microrl_t *pThis = (microrl_t *)vpThis;
+
+    char mas[128] = {0};
+    //"\033[35m %s \033[0m"  //31(red) 32(green) 33(yellow) 35(purpur) 36(berezoviy)
+    char *color = GREE_BEGIN;//green
+    if(MPU_IDLE <= 90)//berezoviy
+        color = BERUZ_BEGIN;
+    if (MPU_IDLE < 50)//yellow
+        color = YELLOW_BEGIN;
+    if(MPU_IDLE < 25)//red
+        color = RED_BEGIN;
+//    xsprintf(mas, "MPU IDLE(FREE):\033[%dm%d%%"END_COLOR"\n\r", color, MPU_IDLE);
+    xsprintf(mas, "MPU IDLE(FREE):%s%d%%"END_COLOR"\n\r", color, MPU_IDLE);
+    print(pThis, mas);
+    xsprintf(mas, "MPU USE:%s%d%%"END_COLOR"\n\r", color, 100 - MPU_IDLE);
+    print(pThis, mas);
+
+    //print min MPU free
+    color = GREE_BEGIN;//green
+    if(MIN_MPU_FREE <= 90)//berezoviy
+        color = BERUZ_BEGIN;
+    if (MIN_MPU_FREE < 50)//yellow
+        color = YELLOW_BEGIN;
+    if(MIN_MPU_FREE < 25)//red
+        color = RED_BEGIN;
+    print(pThis, "\n\r");
+    xsprintf(mas, "MPU Minimum IDLE(FREE):%s%d%%"END_COLOR"\n\r", color, MIN_MPU_FREE);
+    print(pThis, mas);
+    xsprintf(mas, "MPU Maximum USE:%s%d%%"END_COLOR"\n\r", color, 100 - MIN_MPU_FREE);
+    print(pThis, mas);
+
+    return 0;
+}
+
+int print_MAS_CPU(void *vpThis, int argc, const char * const *argv)//выввод графика ресурсов за последнии SIZE_CPU_FREE сек
+{
+    microrl_t *pThis = (microrl_t *)vpThis;
+    (void)argc;
+    (void)argv;
+#ifdef SIZE_CPU_FREE
+#define Y_MAS       20//количество точек в консоли по y
+    char mas[SIZE_CPU_FREE + 10] = {0};//линия по оси x
+    for(int i = Y_MAS; i >= 0; i--)
+    {
+        //set color
+        char *color = GREE_BEGIN;
+        if((i * 100 / Y_MAS) <= 90)//berezoviy
+            color = BERUZ_BEGIN;
+        if ((i * 100 / Y_MAS) < 50)//yellow
+            color = YELLOW_BEGIN;
+        if((i * 100 / Y_MAS) < 25)//red
+            color = RED_BEGIN;
+        print(pThis, color);
+
+        xsprintf(mas, "%3d", (i * 100 / Y_MAS));
+        for(int j = 0; j < SIZE_CPU_FREE; j++)
+        {
+            if(masCpuFree[j] == 0)
+                mas[j + 3] = ' ';
+            else if(masCpuFree[j] >= (i * 100 / Y_MAS))
+                mas[j + 3] = '*';
+            else
+                mas[j + 3] = ' ';
+        }
+        mas[SIZE_CPU_FREE + 3] = '\n';
+        mas[SIZE_CPU_FREE + 3 + 1] = '\r';
+        print(pThis, mas);
+        print(pThis, END_COLOR);
+    }
+    xsprintf(mas, "Last %d second\n\r", SIZE_CPU_FREE);
+    print(pThis, mas);
+    return 0;
+#else
+    print(pThis, "Don't remember graphic\n\r");
+    return -1;
+#endif
 }
 
 void writeUARTDebug(unsigned char data)
@@ -167,7 +365,7 @@ void initAll()
 #ifdef USE_RING_BUFFER_USART6
     setTxInterupt(UART_DEBUG, true);
 #endif
-    configureUart(APBPERF_SPEED, UART_DEBUG_SPEED, UART_DEBUG);
+    configureUart(APBPERF_SPEED, /*UART_DEBUG_SPEED*/460800, UART_DEBUG);
 #endif
 
     xdev_out(writeUARTDebug);
@@ -193,7 +391,7 @@ void task_diode(void *p)
     (void)p;
     int i = 0;//итерации по которой определяеться какой диод включать
 
-    vTaskDelay(3000 / portTICK_PERIOD_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
 
     while(1)
     {
@@ -311,6 +509,8 @@ void vApplicationMallocFailedHook()
 void vApplicationStackOverflowHook( TaskHandle_t xTask,
                                     char * pcTaskName )
 {
+    xfprintf(putUart6, "Memory overflow in task - \"%s\"\n", pcTaskName);
+    vTaskDelete(xTask);
     portDISABLE_INTERRUPTS();
 
     /* Loop forever */
